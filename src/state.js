@@ -20,7 +20,7 @@ function proxy(vm, source, key) {
 }
 
 function initData(vm) {
-  let data = vm.$options.data;
+  let data = vm.$options.data;  //vm.$el vue内部会对属性检测，如果以$开头，不会进行代码
   // vue2中会将data中的所有数据 进行数据劫持 Object.defineProperty
   // 这时vm和data没有任何关系，通过_data进行关联
   data = vm._data = isFunction(data) ? data.call(vm) : data;

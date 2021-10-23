@@ -17,12 +17,21 @@
     let vm = new Vue({
       el: '#app',
       data: {
-        name: [1, 2, 3]
+        arr: [{ name: 'Jenny' }, { name: 'Chan' }]
       }
     })
+    vm.arr[0].name
+
+    // vm.name.push('123');
+
+    // 数组没有监控 索引的变化，但是索引对应的内容是对象类型，需要被监控 Object.freeze()
+
     // vm._data.a = { ...vm._data.a, b: 1 };
     // vm.name === vm._data.name
-    console.log(vm.name);
+    // console.log(vm.name);
+    // 用户很少通过索引操作数组 arr[82] = 100 内部就想到不对索引进行拦截，因为消耗验证，内部数组不采用defineProperty
+
+    // push shift pop unshif reverse sort splice 7个方法都是变异方法，就是会更改原数组
   </script>
 </body>
 
