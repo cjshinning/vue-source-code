@@ -15,13 +15,17 @@
     // viewModel 数据模型
     // 典型的MVVM view vm model
     let vm = new Vue({
-      el: '#app',
+      // el: '#app',
       data: {
         arr: [{ name: 'Jenny' }, { name: 'Chan' }]
-      }
+      },
+      // render() {
+      //   return h('div', { class: 'xxx' }, 'hello');
+      // }
     })
-    vm.arr[0].name
+    vm.$mount('#app');
 
+    // vm.arr[0].name
     // vm.name.push('123');
 
     // 数组没有监控 索引的变化，但是索引对应的内容是对象类型，需要被监控 Object.freeze()
