@@ -3,11 +3,9 @@ import { generate } from './generate';
 
 export function compileToFunction(template) {
   let root = parserHTML(template);
-  console.log(root);
 
   // 生成代码
   let code = generate(root);
-
   console.log(code);
 
   // render(){
