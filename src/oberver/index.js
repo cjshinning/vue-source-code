@@ -37,7 +37,6 @@ function defineReactive(data, key, value) {
   observe(value); //本身用户默认值是对象套对象，需要地柜处理（性能差）
   Object.defineProperty(data, key, {
     get() {
-      console.log('get', data, key);
       return value;
     },
     set(newV) {
