@@ -1,5 +1,5 @@
 import { isFunction } from './utils';
-import { observe } from './oberver/index';
+import { observe } from './observer/index';
 
 export function initState(vm) { //状态初始化
   const opts = vm.$options;

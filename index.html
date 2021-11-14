@@ -12,38 +12,25 @@
   <!-- 'hello' + arr + 'world' -->
   <!-- <div id="app" a=1 style="color:red;background:blue"><span>world</span>hello</div> -->
   <!-- <div id="app" a=1>hello</div> -->
-  <div id="app" a=1 style="color:red;background:blue">
-    hello {{arr}} world
+  <div id="app">
+    hello {{name}} world {{name}} {{age}}
   </div>
   <script src="./dist/vue.js"></script>
   <script>
-    // viewModel 数据模型
-    // 典型的MVVM view vm model
     let vm = new Vue({
       // el: '#app',
       data: {
-        arr: {
-          name: 'Jenny'
-        }
-      },
-      // render() {
-      //   return h('div', { class: 'xxx' }, 'hello');
-      // }
+        name: 'Jenny',
+        age: 18
+      }
     })
     vm.$mount('#app');
 
-    // vm.arr[0].name
-    // vm.name.push('123');
-
-    // 数组没有监控 索引的变化，但是索引对应的内容是对象类型，需要被监控 Object.freeze()
-
-    // vm._data.a = { ...vm._data.a, b: 1 };
-    // vm.name === vm._data.name
-    // console.log(vm.name);
-    // 用户很少通过索引操作数组 arr[82] = 100 内部就想到不对索引进行拦截，因为消耗验证，内部数组不采用defineProperty
-
-    // push shift pop unshif reverse sort splice 7个方法都是变异方法，就是会更改原数组
-
+    // 数据变化需要影响视图，数据和页面渲染关联起来
+    setTimeout(() => {
+      vm.name = 'hello';
+      // vm._update(vm._render()); //重新调用render方法产生虚拟dom，目前还没有diff
+    }, 1000)
 
   </script>
 </body>
