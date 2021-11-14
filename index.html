@@ -29,6 +29,9 @@
     // 数据变化需要影响视图，数据和页面渲染关联起来
     setTimeout(() => {
       vm.name = 'hello';
+      vm.name = 'chen';
+      vm.name = 'hello';
+      vm.name = 123;
       // vm._update(vm._render()); //重新调用render方法产生虚拟dom，目前还没有diff
     }, 1000)
 

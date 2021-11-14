@@ -13,6 +13,11 @@ class Dep { //每个属性我都给他分配一个dep，dep可以存放watcher�
   addSub(watcher) {
     this.subs.push(watcher);
   }
+  notify() {
+    this.subs.forEach(watcher => {
+      watcher.update();
+    })
+  }
 }
 Dep.target = null;  //一份
 
