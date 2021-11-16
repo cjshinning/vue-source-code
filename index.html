@@ -32,6 +32,14 @@
       vm.name = 'chen';
       vm.name = 'hello';
       vm.name = 123;
+      // console.log(vm.$el);
+      // 如果用户不停的写定时器 会开n个线程
+      // setTimeout(() => {
+      //   console.log(vm.$el);
+      // }, 0)
+      vm.$nextTick(() => {
+        console.log(vm.$el);
+      })
       // vm._update(vm._render()); //重新调用render方法产生虚拟dom，目前还没有diff
     }, 1000)
 

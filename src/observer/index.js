@@ -43,7 +43,7 @@ function defineReactive(data, key, value) {
       if (Dep.target) { //此值是在模板中取值的
         dep.depend(); //让dep记住watcher
       }
-      console.log(key, dep);
+      // console.log(key, dep);
       return value;
     },
     set(newV) {

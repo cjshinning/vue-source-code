@@ -1,5 +1,6 @@
 import { patch } from './vdom/patch';
 import Watcher from './observer/watcher';
+import { nextTick } from './utils';
 
 export function lifecycleMixin(Vue) {
   Vue.prototype._update = function (vnode) {
@@ -8,6 +9,7 @@ export function lifecycleMixin(Vue) {
     const vm = this;
     vm.$el = patch(vm.$el, vnode);
   }
+  Vue.prototype.$nextTick = nextTick;
 }
 
 // 后续每个组件渲染时都会有一个watcher
