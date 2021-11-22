@@ -31,6 +31,9 @@ methods.forEach(method => {
     }
     if (inserted) ob.observeArray(inserted);
 
+    // 数组的observer.dep属性
+    ob.dep.notify();
+
     // arr.slice(0, 1, xxx, yyy);
 
     // arrayMethods.push({ a: 1 }, { a: 1 }, { a: 1 })
