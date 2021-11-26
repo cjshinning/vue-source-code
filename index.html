@@ -9,49 +9,50 @@
 </head>
 
 <body>
-  <!-- 'hello' + arr + 'world' -->
-  <!-- <div id="app" a=1 style="color:red;background:blue"><span>world</span>hello</div> -->
-  <!-- <div id="app" a=1>hello</div> -->
-  <!-- <div id="app">
-    hello {{name}} world {{name}} {{age}}
-  </div> -->
-  <div id="app">
-    {{obj}}
-  </div>
+  <div id="app">{{name}}</div>
+  <!-- <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script> -->
   <script src="./dist/vue.js"></script>
   <script>
-    let vm = new Vue({
-      // el: '#app',
+    const vm = new Vue({  //watcher 渲染watcher
+      el: '#app',
       data: {
-        // name: 'Jenny',
-        // age: 18,
-        // arr: [[1, 2, 3]]  //最外层的数组进行了依赖收集 JSON.stringify()
-        obj: { a: { a: 1 } }
+        name: 'Jenny',
+        age: {
+          n: 100
+        }
+      },
+      methods: {
+        a() {
+          console.log('ok');
+        }
+      },
+      watch: {  //用户watcher
+        name(newVal, oldVal) {
+          console.log(newVal, oldVal);
+        },
+        name: [
+          function (newVal, oldVal) {
+            console.log(newVal, oldVal);
+          },
+          function (a, b) {
+            console.log(a, b);
+          }
+        ],
+        // name: 'a',
+        // 'age.n'(newVal, oldVal) {
+        //   console.log(newVal, oldVal)
+        // }
       }
     })
-    vm.$mount('#app');
 
-    // 数据变化需要影响视图，数据和页面渲染关联起来
-    // setTimeout(() => {
-    //   vm.name = 'hello';
-    //   vm.name = 'chen';
-    //   vm.name = 'hello';
-    //   vm.name = 123;
-    //   // console.log(vm.$el);
-    //   // 如果用户不停的写定时器 会开n个线程
-    //   // setTimeout(() => {
-    //   //   console.log(vm.$el);
-    //   // }, 0)
-    //   vm.$nextTick(() => {
-    //     console.log(vm.$el);
-    //   })
-    //   // vm._update(vm._render()); //重新调用render方法产生虚拟dom，目前还没有diff
-    // }, 1000)
+    vm.$watch('name', function (newVal) {
+      console.log(newVal);
+    })
 
     setTimeout(() => {
-      vm.obj.a.a = 100;
+      vm.name = 'Daisy';
+      // vm.age.n = 18;
     }, 1000)
-
   </script>
 </body>
 
