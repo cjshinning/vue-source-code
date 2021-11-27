@@ -9,7 +9,7 @@
 </head>
 
 <body>
-  <div id="app">{{name}}</div>
+  <div id="app">{{name}} {{fullName}} {{fullName}} {{fullName}}</div>
   <!-- <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script> -->
   <script src="./dist/vue.js"></script>
   <script>
@@ -17,42 +17,69 @@
       el: '#app',
       data: {
         name: 'Jenny',
-        age: {
-          n: 100
+        age: 100,
+        firstName: 'Chan',
+        lastName: 'Jenny'
+      },
+      computed: { //object.defineProperty => getter
+        fullName: {
+          get() {
+            console.log('oooo');
+            return this.firstName + this.lastName
+          },
+          set(newVal) {
+            console.log(newVal);
+          }
         }
       },
       methods: {
-        a() {
-          console.log('ok');
-        }
+        // a() {
+        //   console.log('ok');
+        // }
       },
       watch: {  //用户watcher
-        name(newVal, oldVal) {
-          console.log(newVal, oldVal);
-        },
-        name: [
-          function (newVal, oldVal) {
-            console.log(newVal, oldVal);
-          },
-          function (a, b) {
-            console.log(a, b);
-          }
-        ],
-        // name: 'a',
-        // 'age.n'(newVal, oldVal) {
-        //   console.log(newVal, oldVal)
-        // }
+        // name(newVal, oldVal) {
+        //   console.log(newVal, oldVal);
+        // },
+        // name: [
+        //   function (newVal, oldVal) {
+        //     console.log(newVal, oldVal);
+        //   },
+        //   function (a, b) {
+        //     console.log(a, b);
+        //   }
+        // ],
+        // // name: 'a',
+        // // 'age.n'(newVal, oldVal) {
+        // //   console.log(newVal, oldVal)
+        // // }
       }
     })
 
-    vm.$watch('name', function (newVal) {
-      console.log(newVal);
-    })
+    // 计算属性默认不执行 => object.defineProperty => getter
+    // 多次取值如果依赖不变化，就不会重新执行
+    // 依赖的值变化，需要重新执行 vm.fullName = 'zhou' 
 
-    setTimeout(() => {
-      vm.name = 'Daisy';
-      // vm.age.n = 18;
-    }, 1000)
+    // dirty 表示这个值是不是脏的， 默认是true（取值后值变为false），依赖的值变化了 dirty=>true
+
+    // vm.fullName;
+
+    // setTimeout(() => {
+    //   vm.firstName = 'zhou';
+    // }, 1000)
+
+    vm.fullName;
+    vm.fullName;
+    vm.fullName;
+
+    // vm.$watch('name', function (newVal) {
+    //   console.log(newVal);
+    // })
+
+    // setTimeout(() => {
+    //   vm.name = 'Daisy';
+    //   // vm.age.n = 18;
+    // }, 1000)
   </script>
 </body>
 

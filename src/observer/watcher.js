@@ -9,6 +9,7 @@ class Watcher {
     this.vm = vm;
     this.exprOrFn = exprOrFn;
     this.user = !!options.user;   //是不是用户watcher
+    this.lazy = !!options.lazy;
     this.cb = cb;
     this.options = options;
     this.id = id++;
@@ -32,7 +33,7 @@ class Watcher {
     this.depsId = new Set();
 
     // 第一次的value
-    this.value = this.get();  //默认初始化要取值
+    this.value = this.lazy ? undefined : this.get();  //默认初始化要取值
 
   }
   get() {  //稍后用户更新时可以重新调用getter方法
