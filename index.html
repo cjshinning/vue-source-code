@@ -8,8 +8,13 @@
   <title>Document</title>
 </head>
 
+<!-- 当在页面直接写fullName时，fullName回去手机渲染watcher，因为fullName没有dep 没有收集的功能 -->
+<!-- firstName是在计算属性中使用的，所以他会手机计算属性watcher，没有收集渲染watcher -->
+<!-- 计算属性中的值应该记录 计算属性watcher和渲染watcher -->
+<!-- Dep.target上赋值一个渲染watcher，又将Dep.target设置为计算属性watcher -->
+
 <body>
-  <div id="app">{{name}} {{fullName}} {{fullName}} {{fullName}}</div>
+  <div id="app">{{fullName}}</div>
   <!-- <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script> -->
   <script src="./dist/vue.js"></script>
   <script>
@@ -68,9 +73,14 @@
     //   vm.firstName = 'zhou';
     // }, 1000)
 
-    vm.fullName;
-    vm.fullName;
-    vm.fullName;
+    console.log(vm.fullName);
+    console.log(vm.fullName);
+
+    vm.firstName = 'Li';
+
+    console.log(vm.fullName);
+
+    // console.log(vm.fullName);
 
     // vm.$watch('name', function (newVal) {
     //   console.log(newVal);

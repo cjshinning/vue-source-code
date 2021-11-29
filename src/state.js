@@ -1,6 +1,7 @@
 import { isFunction } from './utils';
 import { observe } from './observer/index';
 import Watcher from './observer/watcher';
+import Dep from './observer/dep';
 
 export function stateMixin(Vue) {
   Vue.prototype.$watch = function (key, handler, options = {}) {
@@ -67,6 +68,7 @@ function createWatcher(vm, key, handler) {
 }
 
 function initComputed(vm, computed) {
+  const watchers = vm._computedWatchers = {};
   for (let key in computed) {
     const userDef = computed[key];
 
@@ -74,10 +76,30 @@ function initComputed(vm, computed) {
     let getter = typeof userDef == 'function' ? userDef : userDef.get;
 
     // 每个计算属性本质就是watcher 目前还没用
-    new Watcher(vm, getter, () => { }, { lazy: true });  //默认不执行
+    // 将watcher和属性做一个映射
+    watchers[key] = new Watcher(vm, getter, () => { }, { lazy: true });  //默认不执行
 
     // 将key定义在vm上
     defineComputed(vm, key, userDef);
+  }
+}
+
+function createComputedGetter(key) {
+  return function computedGetter() { //取计算属性的值 走的这个函数
+    // this._computedWatchers包含着所有的计算属性
+    // 通过key可以拿到对应的watcher，这个watcher中包含了getter
+    let watcher = this._computedWatchers[key];
+    // 通过key可以拿到对应的watcher，这个watcher中包含了getter
+    // 脏就是要调用用户的getter 不脏就是不要调用getter
+    if (watcher.dirty) {  //根据dirty属性来判断是否要重新求值
+      watcher.evaluate();
+    }
+    // 如果当前取完值后 Dep.target还有值，需要继续向上收集
+    if (Dep.target) {
+      // 计算属性watcher内部有两个dep firstName,lastName
+      watcher.depend(); //watcher里对应了多个dep
+    }
+    return watcher.value;
   }
 }
 
@@ -86,7 +108,7 @@ function defineComputed(vm, key, userDef) {
   if (typeof userDef === 'function') {
     sharePropety.get = userDef;
   } else {
-    sharePropety.get = userDef.get;
+    sharePropety.get = createComputedGetter(key);
     sharePropety.set = userDef.set;
   }
   Object.defineProperty(vm, key, sharePropety); //computed就是Object.defineProperty

@@ -10,6 +10,7 @@ class Watcher {
     this.exprOrFn = exprOrFn;
     this.user = !!options.user;   //是不是用户watcher
     this.lazy = !!options.lazy;
+    this.dirty = options.lazy; //如果是计算属性，那么默认值lazy:true，dirty:true
     this.cb = cb;
     this.options = options;
     this.id = id++;
@@ -40,14 +41,19 @@ class Watcher {
     // defineProperty.get，每个熟悉都可以收集自己的watcher
     // 我希望一个属性可以对应多个watcher，同时一个watcher可以对应多个属性
     pushTarget(this); //Dep.target = watcher
-    const value = this.getter();  //render()方法会去vm上取值，vm._update(vm._render());
+    const value = this.getter.call(this.vm);  //render()方法会去vm上取值，vm._update(vm._render());
     popTarget();  //Dep.target = null;如果Dep.target有值说明这个变量在模板中使用了
 
     return value;
   }
   update() {  // vue中的更新是异步的
     // 每次更新时 this
-    queueWatcher(this);  //多次调用update 我希望先将watcher缓存下了，等一会儿一起更新
+
+    if (this.lazy) {
+      this.dirty = true;
+    } else {
+      queueWatcher(this);  //多次调用update 我希望先将watcher缓存下了，等一会儿一起更新
+    }
   }
   run() { //后续要有其他的操作
     let newValue = this.get();
@@ -64,6 +70,16 @@ class Watcher {
       this.depsId.add(id);
       this.deps.push(dep);
       dep.addSub(this);
+    }
+  }
+  evaluate() {
+    this.dirty = false; //为false表示取过值了
+    this.value = this.get(); //用户的getter执行
+  }
+  depend() {
+    let i = this.deps.length;
+    while (i--) {
+      this.deps[i].depend();  //lastName,firstName 收集渲染watcher
     }
   }
 }
