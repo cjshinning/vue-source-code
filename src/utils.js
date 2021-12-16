@@ -54,3 +54,71 @@ export function nextTick(cb) {
     waiting = true;
   }
 }
+
+let lifecycleHooks = [
+  'beforeCreate',
+  'created',
+  'beforeMount',
+  'mounted',
+  'beforeUpdate',
+  'updated',
+  'beforeDestroy',
+  'destroyed'
+]
+
+let strats = {};  //存放各种策略
+// {}  {beforeCreate:fn} => {beforeCreate:[fn]}
+// {beforeCreate:[fn]}  {beforeCreate:[fn]} => {beforeCreate:[fn,fn]}
+function mergeHook(parentVal, childVal) {
+  if (childVal) {
+    if (parentVal) {
+      return parentVal.concat(childVal);  //后续
+    } else {
+      return [childVal];  //第一次
+    }
+  } else {
+    return parentVal;
+  }
+}
+lifecycleHooks.forEach(hook => {
+  strats[hook] = mergeHook
+})
+
+function isObject(val) {
+  return typeof val === 'object' && val !== null;
+}
+
+
+// { a: 1, data: {} } { data: {} }
+function mergeOptions(parent, child) {
+  const options = {};  //合并后的结果
+  for (let key in parent) {
+    mergeField(key);
+  }
+
+  for (let key in child) {
+    if (parent.hasOwnProperty(key)) {
+      continue;
+    }
+    mergeField(key);
+  }
+
+  function mergeField(key) {
+    let parentVal = parent[key];
+    let childVal = child[key];
+    // 策略模式
+    if (strats[key]) {  //如果有对应的策略，就调用对应的策略即可
+      options[key] = strats[key](parentVal, childVal);
+    } else {
+      if (isObject(parentVal) && isObject(childVal)) {
+        options[key] = { ...parentVal, ...childVal };
+      } else {
+        options[key] = child[key];
+      }
+    }
+  }
+
+  return options;
+}
+
+console.log(mergeOptions({ beforeCreate: [() => { }] }, { beforeCreate() { } }));

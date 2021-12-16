@@ -8,93 +8,33 @@
   <title>Document</title>
 </head>
 
-<!-- 当在页面直接写fullName时，fullName回去手机渲染watcher，因为fullName没有dep 没有收集的功能 -->
-<!-- firstName是在计算属性中使用的，所以他会手机计算属性watcher，没有收集渲染watcher -->
-<!-- 计算属性中的值应该记录 计算属性watcher和渲染watcher -->
-<!-- Dep.target上赋值一个渲染watcher，又将Dep.target设置为计算属性watcher -->
-
 <body>
-  <div id="app">{{fullName}}</div>
+  <div id="app"></div>
   <!-- <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script> -->
   <script src="./dist/vue.js"></script>
   <script>
-    const vm = new Vue({  //watcher 渲染watcher
+    // 内部将钩子函数 回调函数，存到一个数组里，当到达某个阶段后依次执行
+
+    // Vue.options = {beforeCreate:[fn1,fn2]}
+
+    Vue.mixin({
+      beforeCreate() {
+        console.log('beforeCreate1');
+      }
+    })
+    Vue.mixin({
+      beforeCreate() {
+        console.log('beforeCreate2');
+      }
+    })
+    const vm = new Vue({  //vm.$options.beforeCreate:[fn1,fn2,fn3]
       el: '#app',
-      data: {
-        name: 'Jenny',
-        age: 100,
-        firstName: 'Chan',
-        lastName: 'Jenny'
-      },
-      computed: { //object.defineProperty => getter
-        fullName: {
-          get() {
-            console.log('oooo');
-            return this.firstName + this.lastName
-          },
-          set(newVal) {
-            console.log(newVal);
-          }
-        }
-      },
-      methods: {
-        // a() {
-        //   console.log('ok');
-        // }
-      },
-      watch: {  //用户watcher
-        // name(newVal, oldVal) {
-        //   console.log(newVal, oldVal);
-        // },
-        // name: [
-        //   function (newVal, oldVal) {
-        //     console.log(newVal, oldVal);
-        //   },
-        //   function (a, b) {
-        //     console.log(a, b);
-        //   }
-        // ],
-        // // name: 'a',
-        // // 'age.n'(newVal, oldVal) {
-        // //   console.log(newVal, oldVal)
-        // // }
+      beforeCreate() {
+        console.log('beforeCreate3');
       }
     })
 
-    // 计算属性默认不执行 => object.defineProperty => getter
-    // 多次取值如果依赖不变化，就不会重新执行
-    // 依赖的值变化，需要重新执行 vm.fullName = 'zhou' 
-
-    // dirty 表示这个值是不是脏的， 默认是true（取值后值变为false），依赖的值变化了 dirty=>true
-
-    // vm.fullName;
-
-    // setTimeout(() => {
-    //   vm.firstName = 'zhou';
-    // }, 1000)
-
-    console.log(vm.fullName);
-    console.log(vm.fullName);
-
-    vm.firstName = 'Li';
-
-    console.log(vm.fullName);
-
-    // console.log(vm.fullName);
-
-    // vm.$watch('name', function (newVal) {
-    //   console.log(newVal);
-    // })
-
-    // setTimeout(() => {
-    //   vm.name = 'Daisy';
-    //   // vm.age.n = 18;
-    // }, 1000)
   </script>
 </body>
 
 </html>
-
-<!-- vue中的嵌套层次不能太深，否则会有大量递归 -->
-<!-- vue中对象是通过defineProperty实现响应式，拦截了get和set，如果不存在的属性不会拦截，也不会响应，可以使用$set让对象自己去notify，或者赋予一个新对象 -->
-<!-- vue中的数组改索引和长度，是不会影响更新的，通过变异方法可以更新视图 7个方法，数组中如果是对象类型，修改对象也可以更新视图 -->
