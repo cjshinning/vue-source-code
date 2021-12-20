@@ -84,13 +84,8 @@ lifecycleHooks.forEach(hook => {
   strats[hook] = mergeHook
 })
 
-function isObject(val) {
-  return typeof val === 'object' && val !== null;
-}
-
-
 // { a: 1, data: {} } { data: {} }
-function mergeOptions(parent, child) {
+export function mergeOptions(parent, child) {
   const options = {};  //合并后的结果
   for (let key in parent) {
     mergeField(key);
@@ -121,4 +116,4 @@ function mergeOptions(parent, child) {
   return options;
 }
 
-console.log(mergeOptions({ beforeCreate: [() => { }] }, { beforeCreate() { } }));
+// console.log(mergeOptions({ beforeCreate: [() => { }] }, { beforeCreate() { } }));

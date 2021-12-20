@@ -9,6 +9,8 @@ export function initGlobalApi(Vue) {
   // Vue.directive
   Vue.mixin = function (options) {
     this.options = mergeOptions(this.options, options);
+
+    console.log(this.options);
     return this;
   }
 }
