@@ -118,7 +118,8 @@ export function mergeOptions(parent, child) {
       if (isObject(parentVal) && isObject(childVal)) {
         options[key] = { ...parentVal, ...childVal };
       } else {
-        options[key] = child[key];
+        // 父亲中有，儿子中没有
+        options[key] = child[key] || parent[key];
       }
     }
   }
@@ -126,4 +127,7 @@ export function mergeOptions(parent, child) {
   return options;
 }
 
-// console.log(mergeOptions({ beforeCreate: [() => { }] }, { beforeCreate() { } }));
+export function isReservedTag(str) {
+  let reservedTag = 'a,div,span,p,img,button,ul,li';
+  return reservedTag.includes(str);
+}
