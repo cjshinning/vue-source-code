@@ -8,63 +8,61 @@ const startTagClose = /^\s*(\/?)>/;
 // 匹配 {{ }} 表达式
 const defaultTagRE = /\{\{((?:.|\r?\n)+?)\}\}/g;
 
-// let r = '<xxx>'.match(new RegExp(qnameCapture));
-// console.log(r);
-
-// html字符串解析成dom树 <div id="app">{{name}}</div>
-
-// 将解析后的结果 组装成一个树结构 栈
-
-// ast(语法层面的描述 js css html) vdom（dom节点）
-
-function createAstElement(tagName, attrs) {
-  return {
-    tag: tagName,
-    type: 1,
-    children: [],
-    parent: null,
-    attrs
-  }
-}
-
-let root = null;
-let stack = [];
-function start(tagName, attributes) {
-  // console.log('start', tagName, attributes);
-  let parent = stack[stack.length - 1];
-  let element = createAstElement(tagName, attributes);
-  if (!root) {
-    root = element;
-  }
-  if (parent) {
-    element.parent = parent; //当访问栈中时  记录父亲是谁
-    parent.children.push(element);
-  }
-  stack.push(element);
-}
-
-function end(tagName) {
-  // console.log('end', tagName);
-  let last = stack.pop();
-  // console.log(last);
-  if (last.tag !== tagName) {
-    throw new Error('标签有误');
-  }
-}
-
-function chars(text) {
-  // console.log('chars', text);
-  text = text.replace(/\s/g, "");
-  let parent = stack[stack.length - 1];
-  if (text) {
-    parent.children.push({
-      type: 3,
-      text
-    })
-  }
-}
 
 export function parserHTML(html) { // id="app">123123</div>
+
+  // html字符串解析成dom树 <div id="app">{{name}}</div>
+  // 将解析后的结果 组装成一个树结构 栈
+  // ast(语法层面的描述 js css html) vdom（dom节点）
+
+  function createAstElement(tagName, attrs) {
+    return {
+      tag: tagName,
+      type: 1,
+      children: [],
+      parent: null,
+      attrs
+    }
+  }
+
+  let root = null;
+  let stack = [];
+
+  function start(tagName, attributes) {
+    // console.log('start', tagName, attributes);
+    let parent = stack[stack.length - 1];
+    let element = createAstElement(tagName, attributes);
+    if (!root) {
+      root = element;
+    }
+    if (parent) {
+      element.parent = parent; //当访问栈中时  记录父亲是谁
+      parent.children.push(element);
+    }
+    stack.push(element);
+  }
+
+  function end(tagName) {
+    // console.log('end', tagName);
+    let last = stack.pop();
+    // console.log(last);
+    if (last.tag !== tagName) {
+      throw new Error('标签有误');
+    }
+  }
+
+  function chars(text) {
+    // console.log('chars', text);
+    text = text.replace(/\s/g, "");
+    let parent = stack[stack.length - 1];
+    if (text) {
+      parent.children.push({
+        type: 3,
+        text
+      })
+    }
+  }
+
   function advance(len) {
     html = html.substring(len);
   }

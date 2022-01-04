@@ -9,6 +9,13 @@
 </head>
 
 <body>
+  <!-- 
+    1、给组件创建一个构造函数，基于大Vue
+    2、开始生成虚拟节点，对组件进行特殊处理，data.hook = {init(){}}
+    3、生成dom元素，如果当前虚拟节点有hook.init属性，说明是组件
+    4、对组件进行 new 组件().$mount() => vm.$el
+    5、将组件的$el 插入到父容器中（父组件）
+   -->
   <!-- render -> vnode -> 真实dom -->
   <div id="app">
     <my-button></my-button>
@@ -22,9 +29,21 @@
 
     const vm = new Vue({  //.__proto__
       el: '#app',
+      beforeCreate() {
+        console.log('beforeCreate', 'parent');
+      },
+      mounted() {
+        console.log('mounted', 'parent');
+      },
       components: {
         'my-button': {
-          template: '<button>world</button>'
+          template: '<button>world</button>',
+          beforeCreate() {
+            console.log('beforeCreate', 'child');
+          },
+          mounted() {
+            console.log('mounted', 'child');
+          },
         }
       }
     })

@@ -7,7 +7,7 @@ export function initMixin(Vue) { //表示在vue的基础上做一次混合操作
   Vue.prototype._init = function (options) {
     const vm = this;  //var that = this;
     vm.$options = mergeOptions(vm.constructor.options, options);  //后面会对options进行扩展操作
-    console.log(vm.$options);
+    // console.log(vm.$options);
 
     callHook(vm, 'beforeCreate');
     // 对数据进行初始化 watch computed props data ...
