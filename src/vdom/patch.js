@@ -24,7 +24,6 @@ export function patch(oldVnode, vnode) {
     // 如果标签名一样比较属性，传入新的虚拟节点，和老的属性，用新的属性更新
     let el = vnode.el = oldVnode.el;
 
-
     // 如果两个虚拟节点是文本节点，比较文本节点。。。
     if (vnode.tag == undefined) { //新老都是文本
       if (oldVnode.text !== vnode.text) {
@@ -43,6 +42,10 @@ export function patch(oldVnode, vnode) {
 
     if (oldChildren.length > 0 && newChildren.length > 0) {
       // 双方都有儿子
+
+      // vue用了双指针的方式 来比对
+      patchChildren(el, oldChildren, newChildren);
+
     } else if (newChildren.length > 0) {  //老的没儿子，新的有儿子
       for (let i = 0; i < newChildren.length; i++) {
         let child = createElm(newChildren[i]);
@@ -56,6 +59,67 @@ export function patch(oldVnode, vnode) {
 
 
 
+  }
+}
+
+function isSameVnode(oldVnode, newVnode) {
+  return (oldVnode.tag == newVnode.tag) && (oldVnode.key == newVnode.key);
+}
+
+function patchChildren(el, oldChildren, newChildren) {
+  let oldStartIndex = 0;
+  let oldStartVnode = oldChildren[0];
+  let oldEndIndex = oldChildren.length - 1;
+  let oldEndVnode = oldChildren[oldEndIndex];
+
+  let newStartIndex = 0;
+  let newStartVnode = newChildren[0];
+  let newEndIndex = newChildren.length - 1;
+  let newEndVnode = newChildren[newEndIndex];
+
+  while (oldStartIndex <= oldEndIndex && newStartIndex <= newEndIndex) {
+    //同时循环新的节点和老的节点，有一方循环完毕就结束了
+    if (isSameVnode(oldStartVnode, newStartVnode)) {  //头头比较，发现标签一致
+      patch(oldStartVnode, newStartVnode);
+      oldStartVnode = oldChildren[++oldStartIndex];
+      newStartVnode = newChildren[++newStartIndex];
+    } else if (isSameVnode(oldEndVnode, newEndVnode)) { //从尾部开始比较
+      patch(oldEndVnode, newEndVnode);
+      oldEndVnode = oldChildren[--oldEndIndex];
+      newEndVnode = newChildren[--newEndIndex];
+    }
+    // 头尾比较 => reverse
+    else if (isSameVnode(oldStartVnode, newEndVnode)) {
+      patch(oldStartVnode, newEndVnode);
+      el.insertBefore(oldStartVnode.el, oldEndVnode.el.nextSilbing);  //移动后老的元素就被移走了，不用删除
+      oldStartVnode = oldChildren[++oldStartIndex];
+      newEndVnode = newChildren[--newEndIndex];
+    }
+    else if (isSameVnode(oldEndVnode, newStartVnode)) {  //尾头比较
+      patch(oldEndVnode, newStartVnode);
+      el.insertBefore(oldEndVnode.el, oldStartVnode.el);
+      oldEndVnode = oldChildren[--oldEndIndex];
+      newStartVnode = newChildren[++newStartIndex];
+    }
+  }
+  // 如果用户追加了一个怎么办？
+
+  // 这里是没有比对完的
+  if (newStartIndex <= newEndIndex) {
+    for (let i = newStartIndex; i <= newEndIndex; i++) {
+      // el.appendChild(createElm(newChildren[i]));
+      // insertBefore方法可以实现appendChild功能 insertBefore(节点, null) dom api
+
+      // 看一下尾指针的下个元素是否存在
+      let anchor = newChildren[newEndIndex + 1] == null ? null : newChildren[newEndIndex + 1].el;
+      el.insertBefore(createElm[i], anchor)
+    }
+  }
+
+  if (oldStartIndex <= oldEndIndex) {
+    for (let i = oldStartIndex; i <= oldEndIndex; i++) {
+      el.removeChild(oldChildren[i].el)
+    }
   }
 }
 
