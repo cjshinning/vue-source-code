@@ -56,9 +56,7 @@ export function patch(oldVnode, vnode) {
     }
 
     // Vue的特点是每个组件都有一个watcher，当前组件中的数据变化，只需要更新当前组件
-
-
-
+    return el;
   }
 }
 
